@@ -1,3 +1,5 @@
+cmd/lwpush/lwpush
+
 # Binaries for programs and plugins
 *.exe
 *.dll
