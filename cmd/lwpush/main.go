@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"cbor"
 	"encoding/hex"
 	"encoding/json"
 	"flag"
@@ -12,19 +13,21 @@ import (
 	"os"
 	"time"
 
-	"github.com/2tvenom/cbor"
 	"github.com/dustin/go-coap"
+	"github.com/jvermillard/nativedtls"
 )
 
 var host string
 var port int
 var endpoint string
+var psk string
 
 func main() {
 
 	flag.StringVar(&host, "s", "qa.airvantage.io", "Server host")
 	flag.IntVar(&port, "p", 5685, "Server port")
 	flag.StringVar(&endpoint, "e", "lwpush", "LWM2M endpoint")
+	flag.StringVar(&psk, "k", "Secret PSK", "PSK")
 
 	flag.Usage = func() {
 		fmt.Printf("Usage:\n")
@@ -45,7 +48,13 @@ func main() {
 	rand.Seed(time.Now().Unix())
 	msgID := rand.Intn(10000)
 
-	// binding to a UDP socket
+
+	ctx := nativedtls.NewDTLSContext()
+	if !ctx.SetCipherList("PSK-AES256-CCM8:PSK-AES128-CCM8") {
+		panic("impossible to set cipherlist")
+	}
+
+	// binding client to a UDP socket
 	laddr, err := net.ResolveUDPAddr("udp", ":0")
 	if err != nil {
 		log.Fatal(err)
@@ -55,11 +64,14 @@ func main() {
 		log.Fatal(err)
 	}
 
-	// server address
-	uaddr, err := net.ResolveUDPAddr("udp", fmt.Sprintf("%s:%d", host, port))
+	// DTLS connection
+	conn, err := net.Dial("udp", fmt.Sprintf("%s:%d", host, port))
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
+
+	c := nativedtls.NewDTLSClient(ctx, conn)
+	c.SetPSK("Client_identity", []byte(psk))
 
 	// Send register request
 	registerMsg := coap.Message{
@@ -70,18 +82,27 @@ func main() {
 	}
 	registerMsg.SetPathString("/rd")
 	registerMsg.AddOption(coap.URIQuery, fmt.Sprintf("ep=%s", endpoint))
-
-	err = coap.Transmit(c, uaddr, registerMsg)
+    
+    d, err := registerMsg.MarshalBinary()
 	if err != nil {
+		log.Fatalf("Error while Marshalling registration request: %v", err)
+	}
+
+// Manu:	err = coap.Transmit(c, uaddr, registerMsg)
+	if _, err = c.Write(d; err != nil {
 		log.Fatalf("Error while sending registration request: %v", err)
 	}
+
 	buf := make([]byte, 1500)
-	rv, err := coap.Receive(c, buf)
+
+// Manu:	rv, err := coap.Receive(c, buf)
+	c.Read(buf)
 	if err != nil {
 		log.Fatalf("Error while receiving registration response: %v", err)
 	}
+	rv, err = ParseMessage(buf[])
 	if &rv != nil {
-		//log.Printf("Ack received: %v", &rv)
+		log.Printf("Registration response: %v", &rv)
 		log.Printf("Registered with id: %s", rv.Options(coap.LocationPath)[1])
 	}
 
@@ -111,17 +132,28 @@ func main() {
 	push.AddOption(coap.URIQuery, fmt.Sprintf("ep=%s", endpoint))
 	push.AddOption(coap.ContentFormat, 60)
 
-	err = coap.Transmit(c, uaddr, push)
+//Manu	err = coap.Transmit(c, uaddr, push)
+    e, err := registerMsg.MarshalBinary()
 	if err != nil {
+		log.Fatalf("Error while Marshalling push request: %v", err)
+	}
+
+	if _, err = c.Write(e; err != nil {
 		log.Fatalf("Error while sending push request: %v", err)
 	}
+
 	buf = make([]byte, 1500)
-	rv, err = coap.Receive(c, buf)
+	// Manu rv, err = coap.Receive(c, buf)
+	c.Read(buf)
+
 	if err != nil {
 		log.Fatalf("Error while receiving push response: %v", err)
 	}
 
+	rv, err = ParseMessage(buf[])
 	if &rv != nil {
 		log.Printf("Push response: %v", &rv)
 	}
+
+	c.Close()
 }
