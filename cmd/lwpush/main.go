@@ -2,7 +2,6 @@ package main
 
 import (
 	"bytes"
-	"cbor"
 	"encoding/hex"
 	"encoding/json"
 	"flag"
@@ -13,6 +12,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/2tvenom/cbor"
 	"github.com/dustin/go-coap"
 )
 

@@ -1,0 +1,19 @@
+{
+	"comment": "",
+	"ignore": "",
+	"package": [
+		{
+			"checksumSHA1": "HLxjbR1OJUJp6AyAutti6KVpaUA=",
+			"path": "github.com/2tvenom/cbor",
+			"revision": "384e799bd841fc59220d0f5911b8cbde7b380875",
+			"revisionTime": "2017-10-16T17:07:23Z"
+		},
+		{
+			"checksumSHA1": "lGflhfBHh4V8Ab13tSrNjmERn3g=",
+			"path": "github.com/dustin/go-coap",
+			"revision": "ddcc80675fa42611359d91a6dfa5aa57fb90e72b",
+			"revisionTime": "2017-02-14T05:37:34Z"
+		}
+	],
+	"rootPath": "github.com/msangoi/lwpush"
+}
