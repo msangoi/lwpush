@@ -21,12 +21,14 @@ var host string
 var port int
 var endpoint string
 var psk string
+var identity string
 
 func main() {
 
 	flag.StringVar(&host, "s", "qa.airvantage.io", "Server host")
 	flag.IntVar(&port, "p", 5685, "Server port")
 	flag.StringVar(&endpoint, "e", "lwpush", "LWM2M endpoint")
+	flag.StringVar(&identity, "i", "Client identity", "Identity")
 	flag.StringVar(&psk, "k", "Secret PSK", "PSK")
 
 	flag.Usage = func() {
@@ -71,7 +73,7 @@ func main() {
 	}
 
 	c := nativedtls.NewDTLSClient(ctx, conn)
-	c.SetPSK("Client_identity", []byte(psk))
+	c.SetPSK(identity, []byte(psk))
 
 	// Send register request
 	registerMsg := coap.Message{
