@@ -91,7 +91,7 @@ func main() {
 	}
 
 // Manu:	err = coap.Transmit(c, uaddr, registerMsg)
-	if _, err = c.Write(d; err != nil {
+	if _, err = c.Write(d); err != nil {
 		log.Fatalf("Error while sending registration request: %v", err)
 	}
 
@@ -140,7 +140,7 @@ func main() {
 		log.Fatalf("Error while Marshalling push request: %v", err)
 	}
 
-	if _, err = c.Write(e; err != nil {
+	if _, err = c.Write(e); err != nil {
 		log.Fatalf("Error while sending push request: %v", err)
 	}
 
