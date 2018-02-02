@@ -1,0 +1,4 @@
+[submodule "vendor/github.com/jvermillard/nativedtls/openssl"]
+	path = vendor/github.com/jvermillard/nativedtls/openssl
+	url = https://github.com/openssl/openssl.git
+	branch = master

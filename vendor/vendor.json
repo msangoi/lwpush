@@ -13,6 +13,12 @@
 			"path": "github.com/dustin/go-coap",
 			"revision": "ddcc80675fa42611359d91a6dfa5aa57fb90e72b",
 			"revisionTime": "2017-02-14T05:37:34Z"
+		},
+		{
+			"checksumSHA1": "//hNOaCbkX7O21K6tel8zJ+Ku/o=",
+			"path": "github.com/jvermillard/nativedtls",
+			"revision": "081be6b11faac7433d1ed7bb4dae9219874b9cdf",
+			"revisionTime": "2016-08-22T07:14:41Z"
 		}
 	],
 	"rootPath": "github.com/msangoi/lwpush"
